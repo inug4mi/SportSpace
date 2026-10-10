@@ -44,15 +44,14 @@ export class AuthController {
     };
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard) // <-- Vuelve a activar el Guard aquí
   @HttpCode(HttpStatus.OK)
   @Post('logout')
   async logout(
-    @Req() req: Request & { user: { sub: string } },
+    @Req() req: Request & { user: { sub: string, email: string, role: string } },
     @Res({ passthrough: true }) response: Response,
   ) {
-    console.log("HEADERS RECIBIDOS:", req.headers); // <-- Mira esto en tu terminal al enviar la petición
-    await this.authService.logout(req.user.sub);
+    // Aquí ya puedes usar req.user.sub de forma segura si necesitas registrar el evento de salida
     response.clearCookie('refreshToken', { path: '/auth/refresh' });
     return { message: 'Sesión cerrada correctamente.' };
   }
