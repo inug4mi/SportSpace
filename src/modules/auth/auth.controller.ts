@@ -1,11 +1,12 @@
-import { Controller, Post, Body, Res, HttpCode, HttpStatus, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Res, HttpCode, HttpStatus, UseGuards, Req } from '@nestjs/common';
 import type { Response, Request } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { Throttle } from '@nestjs/throttler';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-
+import { RolesGuard } from './guards/roles.guard';
+import { Roles } from './decorators/roles.decorator';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -44,7 +45,7 @@ export class AuthController {
     };
   }
 
-  @UseGuards(JwtAuthGuard) // <-- Vuelve a activar el Guard aquí
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post('logout')
   async logout(
@@ -55,4 +56,25 @@ export class AuthController {
     response.clearCookie('refreshToken', { path: '/auth/refresh' });
     return { message: 'Sesión cerrada correctamente.' };
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  getProfile(@Req() req: Request & { user: any }) {
+    // req.user contiene el payload que devolvió tu JwtStrategy (sub, email, role)
+    return {
+      message: 'Acceso autorizado a la ruta protegida',
+      user: req.user,
+    };
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN') // <--- Solo los usuarios con rol ADMIN podrán entrar aquí
+  @Get('admin-dashboard')
+  getAdminDashboard(@Req() req: Request & { user: any }) {
+    return {
+      message: 'Bienvenido al panel de administración exclusivo para ADMINS',
+      adminUser: req.user,
+    };
+  }
+
 }
