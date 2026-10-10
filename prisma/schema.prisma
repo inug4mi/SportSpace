@@ -16,9 +16,9 @@ enum Role {
 model User {
   id           String   @id @default(uuid())
   email        String   @unique
-  password     String
+  passwordHash String
   role         Role     @default(STUDENT)
-  hashedRt     String?  // Hash del Refresh Token para validar sesiones activas
+  refreshToken String?  // Almacenado como hash en caso de rotación o revocación
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 

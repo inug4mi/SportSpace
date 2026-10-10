@@ -13,3 +13,13 @@ Fuente de verdad de negocio: [../requisitos.md](../requisitos.md). En fase 5 se 
 | [administracion.feature](administracion.feature) | HU-19, HU-20 | Must |
 
 HU-17 y HU-18 (Could) no tienen escenarios en PI1.
+
+-----------------------------------
+
+HU-01: Queda cubierta con el DTO de registro que valida estrictamente el dominio @udea.edu.co, el uso de contraseñas seguras y el cifrado con Argon2id en el servicio.
+
+HU-02: Resuelta mediante el login seguro que emite un JWT de corta duración (15 min) y el Refresh Token almacenado en una cookie HttpOnly, Secure y SameSite=Strict.
+
+HU-03: Gestionada mediante el endpoint de logout que limpia el estado de sesión y remueve la cookie de manera segura.
+
+HU-04: Cubierta por la combinación del JwtAuthGuard y el RolesGuard, asegurando que los usuarios con rol STUDENT obtengan una respuesta 403 Forbidden al intentar realizar acciones administrativas o de staff.
